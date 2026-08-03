@@ -111,6 +111,11 @@
 
           </div>
 
+          <!-- Open by default. A script collapses it on phones, where the flyer
+               is shown full width; without JS it stays open, so the text
+               schedule is never lost to a screen reader. -->
+          <details class="mbc-days-toggle" open>
+            <summary class="mbc-days-toggle__summary">View schedule as text</summary>
           <ul class="mbc-days">
             <li class="mbc-day">
               <h3 class="mbc-day__name">Monday</h3>
@@ -153,6 +158,7 @@
               </ul>
             </li>
           </ul>
+          </details>
         </div>
       </section>
 
@@ -471,7 +477,17 @@
       </figure>
     </div>
 
-    <footer class="u-align-center u-clearfix u-container-align-center u-footer u-grey-80 u-footer" id="sec-016e"><div class="u-clearfix u-sheet u-sheet-1"></div></footer>
+    <!-- Appears once you've scrolled past the first screen. -->
+    <button type="button" class="mbc-totop" id="mbc-totop" aria-label="Back to top of page">
+      <span class="mbc-totop__arrow" aria-hidden="true">&uarr;</span>
+    </button>
+
+    <footer class="u-align-center u-clearfix u-container-align-center u-footer u-grey-80 u-footer" id="sec-016e"><div class="u-clearfix u-sheet u-sheet-1">
+      <div class="mbc-footer">
+        <a class="mbc-footer__top" href="#top">Back to Top</a>
+        <p class="mbc-footer__note">Macedonia Baptist Church &middot; 3412 South 22nd Street, Arlington, VA 22204</p>
+      </div>
+    </div></footer>
 
     <script>
     (function () {
@@ -517,6 +533,44 @@
       document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape' && !lightbox.hidden) close();
       });
+    })();
+
+    /* Collapse the text schedule on phones only. The markup ships open, so if
+       this never runs the schedule is still readable. */
+    (function () {
+      var details = document.querySelector('.mbc-days-toggle');
+      if (!details || !window.matchMedia) return;
+
+      var phone = window.matchMedia('(max-width: 767px)');
+
+      function sync() { details.open = !phone.matches; }
+      sync();
+
+      if (phone.addEventListener) phone.addEventListener('change', sync);
+      else if (phone.addListener) phone.addListener(sync);
+    })();
+
+    /* Floating back-to-top button. */
+    (function () {
+      var button = document.getElementById('mbc-totop');
+      if (!button) return;
+
+      var shown = false;
+
+      function update() {
+        var past = (window.pageYOffset || document.documentElement.scrollTop) > 600;
+        if (past === shown) return;
+        shown = past;
+        button.classList.toggle('is-visible', past);
+      }
+
+      button.addEventListener('click', function () {
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      });
+
+      window.addEventListener('scroll', update, { passive: true });
+      update();
     })();
     </script>
 </body></html>

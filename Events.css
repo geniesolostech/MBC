@@ -5,7 +5,10 @@
    Body copy is set at 1.25rem (20px) and up for readability.
    ========================================================================== */
 
-.mbc-events {
+/* On :root rather than .mbc-events so the site footer, which sits outside
+   <main>, can use the same palette. */
+
+:root {
   --purple: #5c16bd;
   --purple-deep: #3f0d86;
   --purple-soft: #f3edfc;
@@ -18,7 +21,9 @@
 
   --font-display: 'Montserrat', 'Roboto', sans-serif;
   --font-body: 'Open Sans', 'Lato', sans-serif;
+}
 
+.mbc-events {
   background-color: var(--cream);
   color: var(--ink);
   font-family: var(--font-body);
@@ -369,6 +374,15 @@ html {
 
 .mbc-day__cancelled::before {
   background-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* ------------------------------------------- text schedule disclosure --- */
+
+/* The toggle only exists on phones; on wider screens the schedule is simply
+   always shown, so the summary is hidden and <details open> stays open. */
+
+.mbc-days-toggle__summary {
+  display: none;
 }
 
 /* ----------------------------------------------------- content bands --- */
@@ -928,6 +942,99 @@ body.mbc-noscroll {
   overflow: hidden;
 }
 
+/* ------------------------------------------------------ back to top --- */
+
+.mbc-totop {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 8000;
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--gold-bright);
+  border-radius: 50%;
+  background-color: var(--purple);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(36, 20, 54, 0.34);
+
+  /* Hidden until scrolled, and never a tab stop while invisible. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+.mbc-totop.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mbc-totop:hover {
+  background-color: var(--purple-deep);
+}
+
+.mbc-totop:focus-visible {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.mbc-totop__arrow {
+  display: block;
+  font-size: 1.75rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* Footer link — the always-available counterpart to the floating button. */
+
+.mbc-footer {
+  text-align: center;
+  padding: 30px 20px 34px;
+}
+
+.mbc-footer__top {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  text-decoration: none;
+  background-color: var(--purple);
+  border: 2px solid var(--purple);
+  border-radius: 999px;
+  padding: 14px 34px;
+  transition: background-color 0.2s ease;
+}
+
+.mbc-footer__top:hover,
+.mbc-footer__top:focus {
+  color: #ffffff;
+  background-color: var(--purple-deep);
+  border-color: var(--purple-deep);
+}
+
+.mbc-footer__top:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.mbc-footer__note {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ink-soft);
+  margin: 18px 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mbc-totop {
+    transition: none;
+    transform: none;
+  }
+}
+
 /* -------------------------------------------------------- responsive --- */
 
 @media (max-width: 991px) {
@@ -979,25 +1086,70 @@ body.mbc-noscroll {
     padding: 28px 0 56px;
   }
 
-  /* Less chrome above the flyer on a phone, so more of the viewport is left
-      for the schedule itself. */
+  /* Full width and uncapped: on a phone the flyer is the schedule, so the
+     printed day text needs to be as large as the screen allows. */
   .mbc-week__flyer img {
-    max-height: max(300px, calc(100vh - 360px));
-    max-height: max(300px, calc(100dvh - 360px));
+    width: 100%;
+    max-height: none;
   }
 
-  /* One swipeable row instead of three wrapped rows of pills. */
+  /* Every option visible at once — no sideways scrolling. */
   .mbc-jump__list {
+    flex-direction: column;
     flex-wrap: nowrap;
-    overflow-x: auto;
-    justify-content: flex-start;
-    scroll-snap-type: x proximity;
-    padding-bottom: 6px;
-    -webkit-overflow-scrolling: touch;
+    align-items: stretch;
+    gap: 12px;
   }
 
-  .mbc-jump__list li {
-    scroll-snap-align: start;
+  .mbc-jump__list a {
+    width: 100%;
+    white-space: normal;
+    padding: 15px 20px;
+    font-size: 1.125rem;
+  }
+
+  /* The text schedule collapses behind this bar on phones. */
+  .mbc-days-toggle__summary {
+    display: block;
+    list-style: none;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--purple-deep);
+    background-color: var(--gold-bright);
+    border-radius: 999px;
+    padding: 16px 24px;
+    cursor: pointer;
+  }
+
+  .mbc-days-toggle__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mbc-days-toggle__summary::after {
+    content: ' \25be';
+  }
+
+  .mbc-days-toggle[open] .mbc-days-toggle__summary::after {
+    content: ' \25b4';
+  }
+
+  .mbc-days-toggle__summary:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 3px;
+  }
+
+  .mbc-days-toggle[open] .mbc-days {
+    margin-top: 22px;
+  }
+
+  /* Keep the floating button clear of the thumb zone on small screens. */
+  .mbc-totop {
+    right: 16px;
+    bottom: 16px;
+    width: 54px;
+    height: 54px;
   }
 
   .mbc-card__body {
