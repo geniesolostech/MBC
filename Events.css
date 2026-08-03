@@ -1,366 +1,1068 @@
- .u-section-1 {
-  background-position: 50% 50%;
-  background-repeat: no-repeat, no-repeat;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('images/view-robot-taking-care-garden5-min.jpg');
-  background-size: cover, cover;
+/* ==========================================================================
+   Events page — hand-authored, not Nicepage output.
+   Re-exporting this page from the Nicepage app will destroy this file.
+   Palette is taken from the church's flyers: deep purple + gold on cream.
+   Body copy is set at 1.25rem (20px) and up for readability.
+   ========================================================================== */
+
+.mbc-events {
+  --purple: #5c16bd;
+  --purple-deep: #3f0d86;
+  --purple-soft: #f3edfc;
+  --gold: #e0a800;
+  --gold-bright: #f6c445;
+  --ink: #241436;
+  --ink-soft: #4a3d59;
+  --cream: #fdfbf6;
+  --rule: rgba(92, 22, 189, 0.14);
+
+  --font-display: 'Montserrat', 'Roboto', sans-serif;
+  --font-body: 'Open Sans', 'Lato', sans-serif;
+
+  background-color: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  line-height: 1.65;
+  display: block;
 }
 
-.u-section-1 .u-sheet-1 {
-  min-height: 336px;
+.mbc-events *,
+.mbc-events *::before,
+.mbc-events *::after {
+  box-sizing: border-box;
 }
 
-.u-section-1 .u-text-1 {
-  text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
-  margin: 120px auto 60px;
+/* Jump-nav targets: glide rather than snap, and stop short of the section
+   edge so the heading isn't flush against the top of the window. */
+
+html {
+  scroll-behavior: smooth;
 }
 
-@media (max-width: 1199px) {
-  .u-section-1 .u-sheet-1 {
-    min-height: 277px;
+.mbc-band,
+.mbc-closing {
+  scroll-margin-top: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-
-  .u-section-1 .u-text-1 {
-    margin-top: 60px;
-  }
 }
 
-@media (max-width: 991px) {
-  .u-section-1 .u-sheet-1 {
-    min-height: 212px;
-  }
+.mbc-wrap {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px;
 }
 
-@media (max-width: 767px) {
-  .u-section-1 .u-sheet-1 {
-    min-height: 159px;
-  }
+/* --------------------------------------------------------------- hero --- */
+
+/* Deliberately short. The weekly schedule below must be fully visible on
+   first load, so the hero is a slim banner rather than a full-height splash. */
+
+.mbc-hero {
+  position: relative;
+  background-image:
+    linear-gradient(160deg, rgba(63, 13, 134, 0.88), rgba(36, 20, 54, 0.8)),
+    url('images/peopleinworshiproom.jpg');
+  background-size: cover;
+  background-position: 50% 42%;
+  text-align: center;
+  padding: 42px 28px 38px;
 }
 
-@media (max-width: 575px) {
-  .u-section-1 .u-sheet-1 {
-    min-height: 100px;
-  }
-}.u-section-2 .u-sheet-1 {
-  min-height: 846px;
+.mbc-hero__inner {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.u-section-2 .u-text-1 {
-  font-size: 3rem;
-  font-weight: 700;
+.mbc-hero__eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  background-image: none;
-  margin: 60px 0 0 570px;
+  color: var(--gold-bright);
+  margin: 0 0 6px;
 }
 
-.u-section-2 .u-image-1 {
-  width: 528px;
-  height: 692px;
-  --radius: 10px;
-  animation-timing-function: ease;
-  margin: -116px auto 0 0;
+.mbc-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.35);
 }
 
-.u-section-2 .u-text-2 {
+.mbc-hero__tagline {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  font-weight: 400;
   font-style: italic;
-  margin: -556px 0 60px 570px;
+  color: rgba(255, 255, 255, 0.94);
+  margin: 8px 0 0;
 }
 
-@media (max-width: 1199px) {
-  .u-section-2 .u-text-1 {
-    width: auto;
-    margin-left: 457px;
+/* ---------------------------------------------------------- this week --- */
+
+.mbc-week {
+  background: linear-gradient(180deg, var(--purple-deep) 0%, var(--purple) 62%, var(--purple) 100%);
+  color: #ffffff;
+  padding: 40px 0 76px;
+  text-align: center;
+}
+
+/* Flyer on the left spanning both rows, heading and jump nav stacked on the
+   right. Keeping the heading beside the flyer rather than above it is what
+   buys the vertical room for the whole schedule to fit on one screen.
+   The third empty row absorbs leftover height so the nav hugs the heading. */
+
+.mbc-week__top {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    "flyer intro"
+    "flyer jump"
+    "flyer .";
+  gap: 22px 48px;
+  align-items: start;
+  text-align: left;
+  margin-bottom: 52px;
+}
+
+.mbc-week__intro {
+  grid-area: intro;
+}
+
+.mbc-week__flyer {
+  grid-area: flyer;
+  margin: 0;
+  align-self: start;
+}
+
+.mbc-eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  margin: 0 0 10px;
+}
+
+.mbc-week__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 3.6vw, 2.875rem);
+  font-weight: 800;
+  line-height: 1.12;
+  color: #ffffff;
+  margin: 0;
+}
+
+.mbc-week__title sup {
+  font-size: 0.5em;
+  vertical-align: super;
+}
+
+.mbc-week__theme {
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 1.9vw, 1.4375rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--gold-bright);
+  margin: 12px 0 6px;
+}
+
+.mbc-week__verse {
+  font-size: 1.0625rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 0;
+}
+
+.mbc-week__verse abbr {
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
+}
+
+/* Cap the flyer against the viewport so it never runs past the fold.
+   The subtracted value is roughly site header + hero + breathing room;
+   if the fit is off on a given screen, this is the number to adjust. */
+
+.mbc-week__flyer .mbc-zoom {
+  width: 100%;
+  max-width: 100%;
+  background-color: transparent;
+  text-align: center;
+}
+
+.mbc-week__flyer img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  max-height: min(calc(100vh - 360px), 780px);
+  max-height: min(calc(100dvh - 360px), 780px);
+}
+
+/* ------------------------------------------------------- jump nav --- */
+
+.mbc-jump {
+  grid-area: jump;
+}
+
+.mbc-jump__label {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 12px;
+}
+
+.mbc-jump__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mbc-jump__list a {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #ffffff;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 2px solid var(--gold-bright);
+  border-radius: 999px;
+  padding: 11px 20px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mbc-jump__list a:hover,
+.mbc-jump__list a:focus {
+  background-color: var(--gold-bright);
+  color: var(--purple-deep);
+}
+
+.mbc-jump__list a:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* Seven day cards, echoing the flyer: purple panel, gold rule, gold text. */
+
+.mbc-days {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.mbc-day {
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 2px solid var(--gold-bright);
+  border-radius: 10px;
+  padding: 24px 26px 26px;
+}
+
+.mbc-day--sunday {
+  background-color: rgba(246, 196, 69, 0.16);
+  grid-column: 1 / -1;
+}
+
+.mbc-day__name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  text-align: center;
+  margin: 0 0 16px;
+}
+
+.mbc-day__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mbc-day__list > li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 14px;
+  font-size: 1.1875rem;
+  line-height: 1.5;
+  color: #ffffff;
+}
+
+.mbc-day__list > li:last-child {
+  margin-bottom: 0;
+}
+
+.mbc-day__list > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--gold-bright);
+}
+
+.mbc-time {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold-bright);
+}
+
+.mbc-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--purple-deep);
+  background-color: var(--gold-bright);
+  border-radius: 999px;
+  padding: 2px 11px;
+  margin-left: 4px;
+  vertical-align: 2px;
+}
+
+.mbc-day__none {
+  font-size: 1.1875rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.72);
+  text-align: center;
+  margin: 0;
+}
+
+.mbc-day__cancelled {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.mbc-day__cancelled::before {
+  background-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* ----------------------------------------------------- content bands --- */
+
+.mbc-band {
+  padding: 84px 0;
+}
+
+.mbc-band--tint {
+  background-color: var(--purple-soft);
+}
+
+.mbc-band__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.2vw, 2.875rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--purple-deep);
+  text-align: center;
+  margin: 0;
+}
+
+.mbc-band__title::after {
+  content: '';
+  display: block;
+  width: 84px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--gold);
+  margin: 18px auto 0;
+}
+
+.mbc-band__intro {
+  font-size: 1.25rem;
+  color: var(--ink-soft);
+  text-align: center;
+  max-width: 720px;
+  margin: 20px auto 54px;
+}
+
+/* ----------------------------------------------------------- cards --- */
+
+.mbc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+  gap: 40px;
+  align-items: start;
+}
+
+.mbc-grid--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+.mbc-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  border-top: 6px solid var(--gold);
+  box-shadow: 0 10px 34px rgba(63, 13, 134, 0.11);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mbc-card--wide {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.mbc-card--wide .mbc-card__media {
+  flex: 0 0 42%;
+}
+
+.mbc-card--wide .mbc-card__body {
+  flex: 1 1 auto;
+}
+
+/* Flyers are contained rather than cropped, so no printed text is cut off.
+   The fixed aspect box keeps cards aligned despite mixed flyer proportions. */
+
+.mbc-card__media {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background-color: var(--purple-soft);
+}
+
+.mbc-card__body {
+  padding: 30px 32px 34px;
+}
+
+.mbc-card__kicker {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin: 0 0 8px;
+}
+
+.mbc-card__kicker--alert {
+  color: #b3261e;
+}
+
+.mbc-card__title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0 0 20px;
+}
+
+.mbc-card__lede {
+  font-size: 1.1875rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+}
+
+.mbc-card__note {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+  margin: 20px 0 0;
+}
+
+/* ------------------------------------------------- detail definitions --- */
+
+.mbc-details {
+  margin: 0;
+  padding: 0;
+}
+
+.mbc-details dt {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin: 0 0 2px;
+}
+
+.mbc-details dd {
+  font-size: 1.1875rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+.mbc-details dd:last-child {
+  margin-bottom: 0;
+}
+
+.mbc-tel,
+.mbc-link {
+  color: var(--purple);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mbc-tel:hover,
+.mbc-link:hover,
+.mbc-tel:focus,
+.mbc-link:focus {
+  color: var(--purple-deep);
+}
+
+.mbc-tel {
+  font-family: var(--font-display);
+  font-size: 1.3125rem;
+  white-space: nowrap;
+}
+
+.mbc-code {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--purple-deep);
+  background-color: var(--purple-soft);
+  border-radius: 6px;
+  padding: 2px 12px;
+}
+
+/* -------------------------------------------------------- name lists --- */
+
+.mbc-names {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 1.1875rem;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+.mbc-names > li {
+  padding: 5px 0 5px 20px;
+  position: relative;
+  border-bottom: 1px solid var(--rule);
+}
+
+.mbc-names > li:last-child {
+  border-bottom: 0;
+}
+
+.mbc-names > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.05em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--gold);
+}
+
+.mbc-names--two {
+  columns: 2;
+  column-gap: 32px;
+}
+
+.mbc-names--two > li {
+  break-inside: avoid;
+}
+
+/* --------------------------------------------------- verses & giving --- */
+
+.mbc-verse {
+  border-left: 4px solid var(--gold);
+  background-color: var(--purple-soft);
+  border-radius: 0 10px 10px 0;
+  padding: 20px 24px;
+  margin: 0 0 22px;
+}
+
+.mbc-verse p {
+  font-size: 1.1875rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.mbc-verse cite {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--purple);
+}
+
+.mbc-verse abbr {
+  text-decoration: none;
+}
+
+.mbc-subhead {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--purple-deep);
+  margin: 0 0 14px;
+}
+
+.mbc-giving,
+.mbc-ways {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  font-size: 1.1875rem;
+  line-height: 1.5;
+}
+
+.mbc-giving > li,
+.mbc-ways > li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.mbc-giving > li:last-child,
+.mbc-ways > li:last-child {
+  border-bottom: 0;
+}
+
+.mbc-amount {
+  display: inline-block;
+  min-width: 92px;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--purple);
+}
+
+/* Announced by screen readers, invisible on screen. */
+
+.mbc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Action buttons — the clickable equivalent of a QR code on a printed
+   flyer, since a code can't be scanned from the screen you're reading. */
+
+.mbc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 22px 0 0;
+}
+
+.mbc-btn {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 15px 28px;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.mbc-btn--primary {
+  color: #ffffff;
+  background-color: var(--purple);
+  border: 2px solid var(--purple);
+}
+
+.mbc-btn--primary:hover,
+.mbc-btn--primary:focus {
+  color: #ffffff;
+  background-color: var(--purple-deep);
+  border-color: var(--purple-deep);
+}
+
+.mbc-btn--secondary {
+  color: var(--purple);
+  background-color: #ffffff;
+  border: 2px solid var(--purple);
+}
+
+.mbc-btn--secondary:hover,
+.mbc-btn--secondary:focus {
+  color: #ffffff;
+  background-color: var(--purple);
+}
+
+.mbc-btn:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (max-width: 575px) {
+  .mbc-actions {
+    flex-direction: column;
   }
 
-  .u-section-2 .u-image-1 {
-    width: 404px;
-    height: 698px;
-    margin-top: -53px;
-  }
-
-  .u-section-2 .u-text-2 {
-    width: auto;
-    margin-top: -625px;
-    margin-left: 457px;
+  .mbc-btn {
+    width: 100%;
   }
 }
+
+.mbc-way__label {
+  display: inline-block;
+  min-width: 118px;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--purple);
+}
+
+/* ------------------------------------------------------------ closing --- */
+
+.mbc-closing {
+  background-color: var(--purple-deep);
+  color: #ffffff;
+  text-align: center;
+  padding: 76px 0 84px;
+}
+
+.mbc-closing__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 16px;
+}
+
+.mbc-closing__text {
+  font-size: 1.375rem;
+  color: var(--gold-bright);
+  margin: 0 0 28px;
+}
+
+.mbc-closing__address {
+  font-size: 1.1875rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 18px;
+}
+
+.mbc-closing__address .mbc-tel {
+  color: var(--gold-bright);
+}
+
+.mbc-closing__pastor {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+}
+
+/* --------------------------------------------------- zoom + lightbox --- */
+
+.mbc-zoom {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0;
+  margin: 0 auto;
+  border: 0;
+  background-color: var(--purple-soft);
+  cursor: zoom-in;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.mbc-zoom img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.35s ease;
+}
+
+.mbc-zoom:hover img,
+.mbc-zoom:focus img {
+  transform: scale(1.03);
+}
+
+.mbc-zoom__hint {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  background-color: rgba(36, 20, 54, 0.78);
+  border-radius: 999px;
+  padding: 6px 14px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.mbc-zoom:hover .mbc-zoom__hint,
+.mbc-zoom:focus .mbc-zoom__hint {
+  opacity: 1;
+}
+
+.mbc-zoom:focus-visible {
+  outline: 4px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.mbc-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background-color: rgba(24, 10, 46, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  cursor: zoom-out;
+}
+
+.mbc-lightbox[hidden] {
+  display: none;
+}
+
+.mbc-lightbox__figure {
+  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.mbc-lightbox__img {
+  max-width: 100%;
+  max-height: calc(100vh - 150px);
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  cursor: default;
+}
+
+.mbc-lightbox__caption {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.88);
+  text-align: center;
+  max-width: 640px;
+}
+
+.mbc-lightbox__close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  width: 54px;
+  height: 54px;
+  font-size: 2.25rem;
+  line-height: 1;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.14);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.mbc-lightbox__close:hover {
+  background-color: rgba(255, 255, 255, 0.26);
+}
+
+.mbc-lightbox__close:focus-visible {
+  outline: 4px solid var(--gold-bright);
+  outline-offset: 3px;
+}
+
+body.mbc-noscroll {
+  overflow: hidden;
+}
+
+/* -------------------------------------------------------- responsive --- */
 
 @media (max-width: 991px) {
-  .u-section-2 .u-text-1 {
-    margin-top: 777px;
-    margin-right: auto;
-    margin-left: 0;
+  .mbc-hero {
+    padding: 32px 24px 30px;
   }
 
-  .u-section-2 .u-image-1 {
-    height: 675px;
-    margin-top: -770px;
-    margin-right: initial;
-    margin-left: initial;
-    width: auto;
+  /* Single column: heading, then flyer, then the jump nav. */
+  .mbc-week__top {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "intro"
+      "flyer"
+      "jump";
+    gap: 20px;
+    text-align: center;
+    margin-bottom: 44px;
   }
 
-  .u-section-2 .u-text-2 {
-    margin-top: 115px;
-    margin-right: 260px;
-    margin-left: 0;
-  }
-}
-
-@media (max-width: 767px) {
-  .u-section-2 .u-text-1 {
-    margin-top: 755px;
-    margin-right: 0;
+  .mbc-jump__list {
+    justify-content: center;
   }
 
-  .u-section-2 .u-image-1 {
-    margin-top: -748px;
-    width: auto;
-    margin-right: initial;
-    margin-left: initial;
+  .mbc-band {
+    padding: 64px 0;
   }
 
-  .u-section-2 .u-text-2 {
-    margin-top: 93px;
-    margin-right: 0;
-  }
-}
-
-@media (max-width: 575px) {
-  .u-section-2 .u-sheet-1 {
-    min-height: 794px;
+  .mbc-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
   }
 
-  .u-section-2 .u-text-1 {
-    margin-top: 23px;
+  .mbc-card--wide {
+    flex-direction: column;
   }
 
-  .u-section-2 .u-image-1 {
-    height: 441px;
-    margin-top: 23px;
-    width: auto;
-    margin-right: initial;
-    margin-left: initial;
-  }
-
-  .u-section-2 .u-text-2 {
-    margin-top: 0;
-  }
-} .u-section-3 {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/Untitled-1copy.jpg');
-  background-position: 50% 50%;
-}
-
-.u-section-3 .u-sheet-1 {
-  min-height: 271px;
-}
-
-.u-section-3 .u-text-1 {
-  margin: 39px 0 60px;
-}
-
-@media (max-width: 1199px) {
-  .u-section-3 .u-sheet-1 {
-    min-height: 223px;
-  }
-}
-
-@media (max-width: 991px) {
-  .u-section-3 .u-sheet-1 {
-    min-height: 171px;
+  .mbc-card--wide .mbc-card__media {
+    flex: 1 1 auto;
   }
 }
 
 @media (max-width: 767px) {
-  .u-section-3 .u-sheet-1 {
-    min-height: 128px;
+  .mbc-wrap {
+    padding: 0 20px;
+  }
+
+  .mbc-week {
+    padding: 28px 0 56px;
+  }
+
+  /* Less chrome above the flyer on a phone, so more of the viewport is left
+      for the schedule itself. */
+  .mbc-week__flyer img {
+    max-height: max(300px, calc(100vh - 360px));
+    max-height: max(300px, calc(100dvh - 360px));
+  }
+
+  /* One swipeable row instead of three wrapped rows of pills. */
+  .mbc-jump__list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    scroll-snap-type: x proximity;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mbc-jump__list li {
+    scroll-snap-align: start;
+  }
+
+  .mbc-card__body {
+    padding: 26px 24px 30px;
+  }
+
+  .mbc-names--two {
+    columns: 1;
+  }
+
+  .mbc-card__media {
+    aspect-ratio: 3 / 4;
   }
 }
 
 @media (max-width: 575px) {
-  .u-section-3 .u-sheet-1 {
-    min-height: 142px;
+  .mbc-events {
+    font-size: 1.1875rem;
   }
 
-  .u-section-3 .u-text-1 {
-    margin-bottom: 24px;
-  }
-} .u-section-4 {
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-image: linear-gradient(to bottom, #2089ec, #f88a10);
-  background-size: cover;
-}
-
-.u-section-4 .u-sheet-1 {
-  min-height: 1039px;
-}
-
-.u-section-4 .u-image-1 {
-  width: 796px;
-  height: 997px;
-  margin: 21px auto;
-}
-
-@media (max-width: 991px) {
-  .u-section-4 .u-sheet-1 {
-    min-height: 944px;
+  .mbc-hero {
+    padding: 24px 20px 24px;
   }
 
-  .u-section-4 .u-image-1 {
-    width: 720px;
-    height: 902px;
-  }
-}
-
-@media (max-width: 767px) {
-  .u-section-4 .u-sheet-1 {
-    min-height: 719px;
+  .mbc-hero__eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
   }
 
-  .u-section-4 .u-image-1 {
-    width: 540px;
-    height: 677px;
+  .mbc-day {
+    padding: 20px 20px 22px;
+  }
+
+  .mbc-way__label,
+  .mbc-amount {
+    display: block;
+    min-width: 0;
+    margin-bottom: 2px;
+  }
+
+  .mbc-lightbox {
+    padding: 20px 12px;
+  }
+
+  .mbc-lightbox__close {
+    top: 10px;
+    right: 12px;
   }
 }
 
-@media (max-width: 575px) {
-  .u-section-4 .u-sheet-1 {
-    min-height: 471px;
-  }
-
-  .u-section-4 .u-image-1 {
-    width: 340px;
-    height: 426px;
-    margin-top: -458px;
-  }
-} .u-section-5 {
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-image: linear-gradient(to bottom, #2089ec, #e7f2fd);
-  background-size: cover;
-}
-
-.u-section-5 .u-sheet-1 {
-  min-height: 1118px;
-}
-
-.u-section-5 .u-image-1 {
-  width: 536px;
-  height: 695px;
-  margin: 30px auto 0 0;
-}
-
-.u-section-5 .u-image-2 {
-  width: 490px;
-  height: 490px;
-  margin: -695px 16px 0 auto;
-}
-
-.u-section-5 .u-image-3 {
-  width: 490px;
-  height: 490px;
-  margin: 57px 22px 0 auto;
-}
-
-.u-section-5 .u-image-4 {
-  width: 536px;
-  height: 750px;
-  margin: -1037px auto 60px 0;
-}
-
-@media (max-width: 1199px) {
-  .u-section-5 .u-image-1 {
-    --radius: 50px;
+/* The zoom hint is a hover affordance; on touch devices it only adds noise. */
+@media (hover: none) {
+  .mbc-zoom__hint {
+    display: none;
   }
 }
 
-@media (max-width: 575px) {
-  .u-section-5 .u-sheet-1 {
-    min-height: 290px;
+@media (prefers-reduced-motion: reduce) {
+  .mbc-zoom img,
+  .mbc-zoom__hint {
+    transition: none;
   }
 
-  .u-section-5 .u-image-1 {
-    width: 340px;
-    height: 441px;
-  }
-
-  .u-section-5 .u-image-2 {
-    width: 340px;
-    height: 340px;
-    margin-top: -441px;
-    margin-right: 0;
-  }
-
-  .u-section-5 .u-image-3 {
-    width: 340px;
-    height: 340px;
-    margin-right: 0;
-  }
-
-  .u-section-5 .u-image-4 {
-    width: 340px;
-    height: 476px;
-    margin-top: -887px;
-  }
-} .u-section-6 {
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-image: linear-gradient(to bottom, #2089ec, #e7f2fd);
-  background-size: cover;
-}
-
-.u-section-6 .u-sheet-1 {
-  min-height: 1118px;
-}
-
-.u-section-6 .u-image-1 {
-  width: 536px;
-  height: 695px;
-  margin: 30px auto 0 0;
-}
-
-.u-section-6 .u-image-2 {
-  width: 568px;
-  height: 568px;
-  margin: -686px 19px 60px auto;
-}
-
-@media (max-width: 1199px) {
-  .u-section-6 .u-image-1 {
-    --radius: 50px;
-  }
-}
-
-@media (max-width: 767px) {
-  .u-section-6 .u-sheet-1 {
-    min-height: 1090px;
-  }
-
-  .u-section-6 .u-image-2 {
-    width: 540px;
-    height: 540px;
-    margin-right: 0;
-  }
-}
-
-@media (max-width: 575px) {
-  .u-section-6 .u-sheet-1 {
-    min-height: 968px;
-  }
-
-  .u-section-6 .u-image-1 {
-    height: 441px;
-    margin-top: 0;
-    margin-right: initial;
-    margin-left: initial;
-    width: auto;
-  }
-
-  .u-section-6 .u-image-2 {
-    height: 340px;
-    margin-top: 71px;
-    margin-right: initial;
-    margin-left: initial;
-    width: auto;
+  .mbc-zoom:hover img,
+  .mbc-zoom:focus img {
+    transform: none;
   }
 }
