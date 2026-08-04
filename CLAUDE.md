@@ -61,7 +61,7 @@ Editing conventions for this page:
 
 ### Games page
 
-Bible mini-games for children. One game so far: **Books of the Bible: In Order**, entirely in the inline `<script>` at the foot of [Games.html](Games.html). No storage, no network, no library — reloading resets everything, which is intentional (the user explicitly did not want scores saved).
+Bible mini-games for children. One game so far: **Holy Seven Seconds** (put the books of the Bible in order), entirely in the inline `<script>` at the foot of [Games.html](Games.html). No storage, no network, no library — reloading resets everything, which is intentional (the user explicitly did not want scores saved).
 
 - **The canonical list is the single source of truth.** `var BOOKS` holds all 66 KJV books; the *array index is the book's position in the Bible*, so ordering is just an ascending-index check. The second value in each pair is a familiarity tier (1 = a child knows it, 2 = fairly known, 3 = the rest) used to widen the pool as the score climbs. Don't reorder the array.
 - Difficulty: starts at 2 books / 7 seconds; every 5 points adds one book and 2 seconds (`booksAt`, `secondsFor`). Pool widens at 4 books and again at 6 (`tierFor`). `MAX_BOOKS = 10` is a layout guard, not a rule the user asked for.
