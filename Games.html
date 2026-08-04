@@ -22,7 +22,18 @@
     <meta property="og:description" content="Holy Seven Seconds — put the books of the Bible in order before the clock runs out. A free Bible game for children from Macedonia Baptist Church.">
     <meta property="og:image" content="images/mbc-glow.png">
     <meta property="og:type" content="website">
-  <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
+  <meta data-intl-tel-input-cdn-path="intlTelInput/">
+    <script>
+    /* Runs before the body paints, so someone who chose dark mode last time
+       never sees a flash of the cream page first. */
+    (function () {
+      try {
+        if (window.localStorage.getItem('mbc-theme') === 'dark') {
+          document.documentElement.className += ' mbc-dark';
+        }
+      } catch (e) { /* storage blocked — just stay on the light theme */ }
+    })();
+    </script></head>
   <body data-path-to-root="./" data-include-products="false" class="u-body u-clearfix u-xl-mode" data-lang="en"><header class="u-border-3 u-border-grey-75 u-box-shadow u-clearfix u-custom-color-1 u-header u-header" id="sec-fdf1"><div class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
         <nav class="u-menu u-menu-one-level u-offcanvas u-menu-1" role="navigation" aria-label="Menu navigation">
           <div class="menu-collapse u-custom-font u-font-montserrat" style="font-size: 1.25rem; letter-spacing: 0px;">
@@ -72,6 +83,13 @@
       <section class="mbc-arena" aria-labelledby="game-heading">
         <div class="mbc-wrap">
 
+          <div class="mbc-themebar">
+            <button type="button" class="mbc-theme" id="mbc-theme" aria-pressed="false">
+              <span class="mbc-theme__label">Dark mode</span>
+              <span class="mbc-theme__switch" aria-hidden="true"><span class="mbc-theme__knob"></span></span>
+            </button>
+          </div>
+
           <div class="mbc-arena__head">
             <p class="mbc-eyebrow">Game One</p>
             <h2 class="mbc-arena__title" id="game-heading">Holy Seven Seconds</h2>
@@ -115,7 +133,7 @@
                 <li>Tap the books in the order they appear in the Bible.</li>
                 <li>Press <strong>Lock It In</strong> before the timer empties.</li>
                 <li>One wrong order &mdash; or one buzzer &mdash; ends the game.</li>
-                <li>Every 5 points adds another book, and 2 more seconds.</li>
+                <li>Every 10 points adds another book, and 2 more seconds.</li>
               </ol>
               <button type="button" class="mbc-btn mbc-btn--go" id="mbc-begin">Start Game</button>
               <p class="mbc-screen__foot">Starts with 2 books and 7 seconds.</p>
@@ -208,8 +226,8 @@
       ];
 
       var START_BOOKS = 2;
-      var POINTS_PER_LEVEL = 5;   // points needed before one more book is added
-      var MAX_BOOKS = 10;         // layout guard — needs 40 points to reach
+      var POINTS_PER_LEVEL = 10;  // points needed before one more book is added
+      var MAX_BOOKS = 10;         // layout guard — needs 80 points to reach
       var BASE_SECONDS = 7;       // for the opening 2-book round
       var EXTRA_SECONDS = 2;      // added per book beyond the first two
 
@@ -576,6 +594,31 @@
 
       show('start');
       updateScore(false);
+    })();
+
+    /* Dark mode for the page around the game. The hero and the game panel are
+       already dark, so only the cream area and its text change. */
+    (function () {
+      var button = document.getElementById('mbc-theme');
+      if (!button) return;
+
+      var root = document.documentElement;
+
+      function apply(dark) {
+        root.classList.toggle('mbc-dark', dark);
+        button.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        try {
+          window.localStorage.setItem('mbc-theme', dark ? 'dark' : 'light');
+        } catch (e) { /* storage blocked — the choice just won't outlive the visit */ }
+      }
+
+      // The head script may already have applied it; keep the button in sync.
+      button.setAttribute('aria-pressed',
+        root.classList.contains('mbc-dark') ? 'true' : 'false');
+
+      button.addEventListener('click', function () {
+        apply(!root.classList.contains('mbc-dark'));
+      });
     })();
 
     /* Floating back-to-top button. */

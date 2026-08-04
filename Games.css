@@ -124,6 +124,69 @@ html {
   padding: 20px 0 16px;
 }
 
+/* ---------- dark mode switch ---------- */
+
+.mbc-themebar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+}
+
+.mbc-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border: 2px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.mbc-theme:hover {
+  color: var(--purple);
+  border-color: var(--purple);
+}
+
+.mbc-theme:focus-visible {
+  outline: 3px solid var(--purple);
+  outline-offset: 3px;
+}
+
+.mbc-theme__switch {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(92, 22, 189, 0.2);
+  transition: background-color 0.2s ease;
+}
+
+.mbc-theme__knob {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--purple);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.mbc-theme[aria-pressed="true"] .mbc-theme__switch {
+  background: rgba(246, 196, 69, 0.28);
+}
+
+.mbc-theme[aria-pressed="true"] .mbc-theme__knob {
+  transform: translateX(20px);
+  background: var(--gold-bright);
+}
+
 .mbc-arena__head {
   text-align: center;
   max-width: 780px;
@@ -794,6 +857,48 @@ html {
 }
 
 /* ==========================================================================
+   Dark mode
+   Only the cream band around the game changes: it goes black and its text
+   goes gold. The hero and the game panel are already dark by design, and the
+   grey site footer belongs to the Nicepage shell, so both are left alone.
+   The class lands on <html> from a script in <head>, before first paint.
+   ========================================================================== */
+
+.mbc-dark .mbc-games {
+  background-color: #000;
+  color: var(--gold-bright);
+}
+
+.mbc-dark .mbc-eyebrow,
+.mbc-dark .mbc-arena__title,
+.mbc-dark .mbc-arena__sub,
+.mbc-dark .mbc-more__title,
+.mbc-dark .mbc-more__text {
+  color: var(--gold-bright);
+}
+
+/* The panel's drop shadow is invisible on black, so give it a thin gold
+   edge instead to keep it from bleeding into the background. */
+.mbc-dark .mbc-game {
+  box-shadow: 0 0 0 1px rgba(246, 196, 69, 0.14), 0 20px 50px rgba(0, 0, 0, 0.75);
+}
+
+.mbc-dark .mbc-theme {
+  color: var(--gold-bright);
+  border-color: rgba(246, 196, 69, 0.42);
+}
+
+.mbc-dark .mbc-theme:hover {
+  color: #fff;
+  border-color: var(--gold-bright);
+  background: rgba(246, 196, 69, 0.12);
+}
+
+.mbc-dark .mbc-theme:focus-visible {
+  outline-color: var(--gold-bright);
+}
+
+/* ==========================================================================
    Responsive — desktop first, matching the site's breakpoint order
    ========================================================================== */
 
@@ -918,6 +1023,7 @@ html {
   .mbc-btn,
   .mbc-book__btn,
   .mbc-book__badge,
+  .mbc-theme__knob,
   .mbc-totop {
     transition: none;
   }
