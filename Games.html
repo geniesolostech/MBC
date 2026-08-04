@@ -133,7 +133,7 @@
                 <li>Tap the books in the order they appear in the Bible.</li>
                 <li>Press <strong>Lock It In</strong> before the timer empties.</li>
                 <li>One wrong order &mdash; or one buzzer &mdash; ends the game.</li>
-                <li>Every 10 points adds another book, and 2 more seconds.</li>
+                <li>Ten rounds with 2 books, then one more book &mdash; and 2 more seconds &mdash; every 20 rounds.</li>
               </ol>
               <button type="button" class="mbc-btn mbc-btn--go" id="mbc-begin">Start Game</button>
               <p class="mbc-screen__foot">Starts with 2 books and 7 seconds.</p>
@@ -226,8 +226,10 @@
       ];
 
       var START_BOOKS = 2;
-      var POINTS_PER_LEVEL = 10;  // points needed before one more book is added
-      var MAX_BOOKS = 10;         // layout guard — needs 80 points to reach
+      var OPENING_ROUNDS = 10;    // rounds at 2 books before the first step up
+      var STAGE_ROUNDS = 20;      // rounds at every size after the opening one
+      var WIDEN_AT = 20;          // score where the beginner pool opens up
+      var MAX_BOOKS = 10;         // layout guard — needs 150 points to reach
       var BASE_SECONDS = 7;       // for the opening 2-book round
       var EXTRA_SECONDS = 2;      // added per book beyond the first two
 
@@ -280,17 +282,23 @@
 
       /* ---------- round shape ---------- */
 
+      /* A short opening stage, then longer ones: 10 rounds at 2 books,
+         then 20 rounds at each size after that. */
       function booksAt(points) {
-        return Math.min(START_BOOKS + Math.floor(points / POINTS_PER_LEVEL), MAX_BOOKS);
+        if (points < OPENING_ROUNDS) return START_BOOKS;
+        var stage = Math.floor((points - OPENING_ROUNDS) / STAGE_ROUNDS);
+        return Math.min(START_BOOKS + 1 + stage, MAX_BOOKS);
       }
 
       function secondsFor(n) {
         return BASE_SECONDS + (n - START_BOOKS) * EXTRA_SECONDS;
       }
 
-      /* Familiar books only at first, then widen out to the whole Bible. */
-      function tierFor(n) {
-        if (n <= 3) return 1;
+      /* Familiar books only at first, then widen out to the whole Bible.
+         The 3-book stage runs 20 rounds, which is a long time on one pool,
+         so it widens halfway through rather than waiting for a fourth book. */
+      function tierFor(n, points) {
+        if (n <= 3) return points >= WIDEN_AT ? 2 : 1;
         if (n <= 5) return 2;
         return 3;
       }
@@ -481,7 +489,7 @@
 
       function nextRound() {
         var n = booksAt(score);
-        var tier = tierFor(n);
+        var tier = tierFor(n, score);
         var seconds = secondsFor(n);
 
         round = arrange(dealFromBag(n, tier));

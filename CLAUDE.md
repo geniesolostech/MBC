@@ -68,7 +68,19 @@ Bible mini-games for children. One game so far: **Holy Seven Seconds** (put the 
   - `dealFromBag` draws *without replacement*. Every book in the pool is used before any repeats; the bag is discarded when the pool widens. It survives Play Again on purpose, so restarting doesn't re-deal the same handful.
   - `arrange` decides left-to-right placement. For 3+ books it just shuffles. **For 2 books it deals from a two-entry deck (`flip`) rather than flipping a coin**, because with only two arrangements pure chance produces visible runs.
 - **Do not "improve" this by rejecting boards that are already in the right order.** That was the original implementation — a `do/while` that reshuffled up to 8 times while the draw was ascending. With two books it isn't a variety guard, it's a near-deterministic rule: measured at **299 of 300 rounds answering right-then-left**. The user noticed. If a change touches round dealing, re-run the variety test (below) before believing it.
-- Difficulty: starts at 2 books / 7 seconds; every 10 points adds one book and 2 seconds (`POINTS_PER_LEVEL`, `booksAt`, `secondsFor`). Pool widens at 4 books and again at 6 (`tierFor`). `MAX_BOOKS = 10` is a layout guard, not a rule the user asked for — at the current cadence it needs 80 points.
+- Difficulty has a **short opening stage then long ones** — 10 rounds at 2 books, then 20 rounds at every size after that (`OPENING_ROUNDS`, `STAGE_ROUNDS`, `booksAt`). Seconds key off board size alone, not the round number: `secondsFor` is `7 + 2×(books − 2)`.
+
+  | Rounds | Books | Clock | Pool |
+  | --- | --- | --- | --- |
+  | 1–10 | 2 | 7s | 24 |
+  | 11–20 | 3 | 9s | 24 |
+  | 21–30 | 3 | 9s | 37 |
+  | 31–50 | 4 | 11s | 37 |
+  | 51–70 | 5 | 13s | 37 |
+  | 71–90 | 6 | 15s | 66 |
+
+  `MAX_BOOKS = 10` is a layout guard, not a rule the user asked for — it now needs 150 points.
+- `tierFor(n, points)` takes the **score as well as** the board size. Size alone would leave a player on the same 24 books for all 30 opening rounds, so it widens early at `WIDEN_AT = 20` — halfway through the 20-round 3-book stage. Changing the stage lengths without revisiting `WIDEN_AT` will put that widen in the wrong place.
 - **Dark mode** turns the cream band around the game black and its text gold; the hero, the game panel and the grey Nicepage footer are already dark and are deliberately left alone. The state is a `mbc-dark` class on `<html>`, so all rules are `.mbc-dark .mbc-<thing>`. The choice is kept in `localStorage` under `mbc-theme` (wrapped in try/catch — private mode blocks it) and re-applied by a small script in `<head>` that runs **before first paint**, so a returning visitor never sees a flash of cream. That head script must stay in `<head>`; moving it to the foot with the others reintroduces the flash. Note this makes headless screenshots order-dependent — a stored theme survives in the Chrome profile, so use a fresh `--user-data-dir` per capture.
 - **The countdown must not be driven by `requestAnimationFrame`.** It was originally, and the clock froze whenever the tab was hidden or the compositor idled. It now runs on a 50ms `setInterval` plus a `setTimeout` backstop, with a short CSS `transition` on `.mbc-timer__bar` smoothing the steps.
 - Interaction is tap-in-order, not drag — it has to work the same on a phone and a desktop. Tapping a chosen card takes it back. `Lock It In` stays disabled until every book is picked, so a partial answer can't accidentally end the game.
