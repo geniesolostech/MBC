@@ -63,13 +63,24 @@ Editing conventions for this page:
 
 Bible mini-games for children. One game so far: **Holy Seven Seconds** (put the books of the Bible in order), entirely in the inline `<script>` at the foot of [Games.html](Games.html). No storage, no network, no library — reloading resets everything, which is intentional (the user explicitly did not want scores saved).
 
-- **The canonical list is the single source of truth.** `var BOOKS` holds all 66 KJV books; the *array index is the book's position in the Bible*, so ordering is just an ascending-index check. The second value in each pair is a familiarity tier (1 = a child knows it, 2 = fairly known, 3 = the rest) used to widen the pool as the score climbs. Don't reorder the array.
+- **The canonical list is the single source of truth.** `var BOOKS` holds all 66 KJV books; the *array index is the book's position in the Bible*, so ordering is just an ascending-index check. The second value in each pair is a familiarity tier (1 = a child knows it, 2 = fairly known, 3 = the rest), currently 24/13/29, used to widen the pool as the score climbs. Don't reorder the array.
+- **How a round is dealt** — two deliberate mechanisms, both there to keep short sittings varied:
+  - `dealFromBag` draws *without replacement*. Every book in the pool is used before any repeats; the bag is discarded when the pool widens. It survives Play Again on purpose, so restarting doesn't re-deal the same handful.
+  - `arrange` decides left-to-right placement. For 3+ books it just shuffles. **For 2 books it deals from a two-entry deck (`flip`) rather than flipping a coin**, because with only two arrangements pure chance produces visible runs.
+- **Do not "improve" this by rejecting boards that are already in the right order.** That was the original implementation — a `do/while` that reshuffled up to 8 times while the draw was ascending. With two books it isn't a variety guard, it's a near-deterministic rule: measured at **299 of 300 rounds answering right-then-left**. The user noticed. If a change touches round dealing, re-run the variety test (below) before believing it.
 - Difficulty: starts at 2 books / 7 seconds; every 10 points adds one book and 2 seconds (`POINTS_PER_LEVEL`, `booksAt`, `secondsFor`). Pool widens at 4 books and again at 6 (`tierFor`). `MAX_BOOKS = 10` is a layout guard, not a rule the user asked for — at the current cadence it needs 80 points.
 - **Dark mode** turns the cream band around the game black and its text gold; the hero, the game panel and the grey Nicepage footer are already dark and are deliberately left alone. The state is a `mbc-dark` class on `<html>`, so all rules are `.mbc-dark .mbc-<thing>`. The choice is kept in `localStorage` under `mbc-theme` (wrapped in try/catch — private mode blocks it) and re-applied by a small script in `<head>` that runs **before first paint**, so a returning visitor never sees a flash of cream. That head script must stay in `<head>`; moving it to the foot with the others reintroduces the flash. Note this makes headless screenshots order-dependent — a stored theme survives in the Chrome profile, so use a fresh `--user-data-dir` per capture.
 - **The countdown must not be driven by `requestAnimationFrame`.** It was originally, and the clock froze whenever the tab was hidden or the compositor idled. It now runs on a 50ms `setInterval` plus a `setTimeout` backstop, with a short CSS `transition` on `.mbc-timer__bar` smoothing the steps.
 - Interaction is tap-in-order, not drag — it has to work the same on a phone and a desktop. Tapping a chosen card takes it back. `Lock It In` stays disabled until every book is picked, so a partial answer can't accidentally end the game.
 - Same accessibility rules as Events: 1.25rem minimum, `clamp()` headings. Book cards are real `<button>`s with `aria-pressed` and a spelled-out `aria-label`; the timer is `aria-hidden` (a per-frame live region would be unusable) and the round length is announced in the prompt text instead.
-- Adding a second game: give it its own `<section>` below the arena, and keep the "More Games Are Coming" list in sync.
+- Adding a second game: give it its own `<section>` below the arena, and keep the "More Games Are Coming" wording in sync.
+
+**Testing it.** Two headless harnesses have been used against this page (see the Chrome notes above); both work by copying `Games.html` to a throwaway `__name.html` in the repo root and appending a driver `<script>`:
+
+- a *behaviour* suite (56 checks) that plays a real game through clicks — canon boundaries, scoring, level-up thresholds, timer lengths, pick/unpick, both game-over routes, restart state, and the theme switch;
+- a *variety* suite (8 checks) that deals 480 fresh 2-book rounds and asserts the direction split stays within 45–55%, that no direction runs more than twice, and that all 24 beginner books are used before any repeat.
+
+The variety suite is the regression test for the dealing bug above — worth rebuilding if round dealing is ever touched.
 
 ## Page/CSS pairing and the `u-` class system
 

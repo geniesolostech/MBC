@@ -207,21 +207,21 @@
          1 = a child will know it, 2 = fairly well known, 3 = the rest. */
       var BOOKS = [
         ['Genesis', 1], ['Exodus', 1], ['Leviticus', 2], ['Numbers', 2],
-        ['Deuteronomy', 2], ['Joshua', 2], ['Judges', 2], ['Ruth', 2],
-        ['1 Samuel', 2], ['2 Samuel', 2], ['1 Kings', 2], ['2 Kings', 2],
+        ['Deuteronomy', 1], ['Joshua', 1], ['Judges', 2], ['Ruth', 1],
+        ['1 Samuel', 1], ['2 Samuel', 2], ['1 Kings', 2], ['2 Kings', 2],
         ['1 Chronicles', 3], ['2 Chronicles', 3], ['Ezra', 3], ['Nehemiah', 3],
-        ['Esther', 2], ['Job', 2], ['Psalms', 1], ['Proverbs', 1],
-        ['Ecclesiastes', 3], ['Song of Solomon', 3], ['Isaiah', 1], ['Jeremiah', 2],
+        ['Esther', 1], ['Job', 1], ['Psalms', 1], ['Proverbs', 1],
+        ['Ecclesiastes', 3], ['Song of Solomon', 3], ['Isaiah', 1], ['Jeremiah', 1],
         ['Lamentations', 3], ['Ezekiel', 2], ['Daniel', 1], ['Hosea', 3],
         ['Joel', 3], ['Amos', 3], ['Obadiah', 3], ['Jonah', 1],
         ['Micah', 3], ['Nahum', 3], ['Habakkuk', 3], ['Zephaniah', 3],
         ['Haggai', 3], ['Zechariah', 3], ['Malachi', 3],
         ['Matthew', 1], ['Mark', 1], ['Luke', 1], ['John', 1],
-        ['Acts', 1], ['Romans', 1], ['1 Corinthians', 2], ['2 Corinthians', 2],
-        ['Galatians', 2], ['Ephesians', 2], ['Philippians', 2], ['Colossians', 3],
+        ['Acts', 1], ['Romans', 1], ['1 Corinthians', 1], ['2 Corinthians', 2],
+        ['Galatians', 2], ['Ephesians', 1], ['Philippians', 2], ['Colossians', 3],
         ['1 Thessalonians', 3], ['2 Thessalonians', 3], ['1 Timothy', 3],
         ['2 Timothy', 3], ['Titus', 3], ['Philemon', 3], ['Hebrews', 2],
-        ['James', 2], ['1 Peter', 2], ['2 Peter', 3], ['1 John', 2],
+        ['James', 1], ['1 Peter', 2], ['2 Peter', 3], ['1 John', 2],
         ['2 John', 3], ['3 John', 3], ['Jude', 3], ['Revelation', 1]
       ];
 
@@ -274,6 +274,9 @@
       var ticker = null;
       var buzzer = null;
       var settled = true;  // true between rounds, so late taps do nothing
+      var bag = [];        // books not yet dealt this cycle
+      var bagTier = null;  // which pool the bag was filled from
+      var flip = [];       // pending left/right arrangements for 2-book rounds
 
       /* ---------- round shape ---------- */
 
@@ -310,11 +313,37 @@
         return list;
       }
 
-      function ascending(list) {
-        for (var i = 1; i < list.length; i++) {
-          if (list[i] < list[i - 1]) return false;
+      /* Deal without replacement: every book in the pool is used before any
+         of them comes round again, so a short sitting shows the widest
+         spread. The bag is thrown away when the pool widens. */
+      function dealFromBag(n, tier) {
+        if (bagTier !== tier) {
+          bag = [];
+          bagTier = tier;
         }
-        return true;
+
+        var out = [];
+        while (out.length < n) {
+          if (!bag.length) bag = shuffle(poolFor(tier));
+          var next = bag.pop();
+          // A refill mid-round could hand back a book already on the board.
+          if (out.indexOf(next) === -1) out.push(next);
+        }
+        return out;
+      }
+
+      /* With two books there are only two possible arrangements, so leaving it
+         to chance lets one direction run several rounds together. Instead deal
+         the two arrangements from their own little shuffled deck: the order
+         inside each pair of rounds is random, but you always get one of each.
+         Three or more books have enough arrangements to just shuffle. */
+      function arrange(books) {
+        if (books.length !== 2) return shuffle(books);
+
+        if (!flip.length) flip = shuffle([true, false]);
+        var inOrder = flip.pop();
+        var pair = books.slice().sort(function (a, b) { return a - b; });
+        return inOrder ? pair : pair.reverse();
       }
 
       function ordinal(n) {
@@ -454,17 +483,8 @@
         var n = booksAt(score);
         var tier = tierFor(n);
         var seconds = secondsFor(n);
-        var draw;
-        var tries = 0;
 
-        // Reshuffle if the board happens to come out already in order —
-        // with two cards that would otherwise happen half the time.
-        do {
-          draw = shuffle(poolFor(tier)).slice(0, n);
-          tries++;
-        } while (tries < 8 && ascending(draw));
-
-        round = draw;
+        round = arrange(dealFromBag(n, tier));
         picked = [];
         settled = false;
 
