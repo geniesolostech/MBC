@@ -14,6 +14,23 @@ No build. Serve the directory over HTTP rather than opening files with `file://`
 
 Consequence for tooling: there is no local way to run linters, formatters, image tools, or QR decoders. Anything requiring those must be done by hand or by the user.
 
+**Chrome is installed and headless mode works** — this is the one real test harness available, and it was used to verify the Games page end to end:
+
+```
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --headless=new --disable-gpu \
+  --user-data-dir=<temp> --dump-dom --virtual-time-budget=90000 file:///C:/.../page.html
+```
+
+- Output must be redirected to a file (PowerShell `Start-Process -RedirectStandardOutput`); piping it to a variable yields nothing.
+- `--virtual-time-budget` fast-forwards `setTimeout`/`setInterval`, so a game or animation that takes 30 real seconds finishes instantly. Swap `--dump-dom` for `--screenshot=out.png` to see the page.
+- To test behaviour, copy the page to a throwaway `__name.html` in the repo root (so relative asset paths still resolve), append a driver `<script>` that clicks real buttons and writes results into a `<pre>`, then read that out of the dumped DOM. Delete the copy afterwards.
+
+Two traps that produce false failures:
+
+- **`requestAnimationFrame` never fires** — no compositor. Anything rAF-driven appears frozen.
+- **CSS transitions never advance**, so `getComputedStyle` returns the *starting* value. Inject `*{transition:none !important}` before reading a computed style or taking a screenshot.
+- `--window-size` has a floor around 485px wide, so a narrow phone width can't be set directly. Load the page in a 390px-wide `<iframe>` instead; media queries key off the iframe's width.
+
 ## Generated vs. hand-editable
 
 | Do not edit (vendor/generated) | Edit freely |
@@ -22,7 +39,13 @@ Consequence for tooling: there is no local way to run linters, formatters, image
 
 **Critical:** re-exporting the site from the Nicepage app overwrites every `.html` and per-page `.css` file and will destroy hand edits. Before changing anything, consider whether the change should be made in Nicepage instead. If editing by hand, keep changes in the generator's own idioms so a future re-export diff stays readable.
 
-## Events page is hand-authored — do not re-export it
+## Two hand-authored pages — do not re-export either
+
+[Events.html](Events.html) / [Events.css](Events.css) and [Games.html](Games.html) / [Games.css](Games.css) were written by hand and **no longer follow the Nicepage `u-` scheme**. Both keep the Nicepage `<head>`, header/nav and footer verbatim so they still match the rest of the site, but everything between is a self-contained `mbc-`-prefixed design system over the church's purple/gold palette, defined as CSS custom properties on `:root` (on `:root`, not on the page wrapper, so the footer — which sits outside `<main>` — can use them too).
+
+Re-exporting either page from Nicepage destroys it.
+
+### Events page
 
 [Events.html](Events.html) and [Events.css](Events.css) were rewritten by hand and **no longer follow the Nicepage `u-` scheme**. They use a self-contained design system with `mbc-`-prefixed classes, CSS custom properties for the church's purple/gold flyer palette, and a small inline vanilla-JS lightbox at the bottom of the HTML. The Nicepage header/nav/footer markup is preserved verbatim at the top and bottom so the page still matches the rest of the site.
 
@@ -35,6 +58,17 @@ Editing conventions for this page:
 - The weekly schedule exists twice on purpose too: the flyer image, then a seven-card text grid (`mbc-days`). Both need updating each week.
 - Body text is 1.25rem (20px) minimum and headings scale with `clamp()` — the congregation includes members with low vision. Don't reduce these.
 - The lightbox needs no library. Any element with `class="mbc-zoom"` and a `data-full` attribute becomes clickable automatically.
+
+### Games page
+
+Bible mini-games for children. One game so far: **Books of the Bible: In Order**, entirely in the inline `<script>` at the foot of [Games.html](Games.html). No storage, no network, no library — reloading resets everything, which is intentional (the user explicitly did not want scores saved).
+
+- **The canonical list is the single source of truth.** `var BOOKS` holds all 66 KJV books; the *array index is the book's position in the Bible*, so ordering is just an ascending-index check. The second value in each pair is a familiarity tier (1 = a child knows it, 2 = fairly known, 3 = the rest) used to widen the pool as the score climbs. Don't reorder the array.
+- Difficulty: starts at 2 books / 7 seconds; every 5 points adds one book and 2 seconds (`booksAt`, `secondsFor`). Pool widens at 4 books and again at 6 (`tierFor`). `MAX_BOOKS = 10` is a layout guard, not a rule the user asked for.
+- **The countdown must not be driven by `requestAnimationFrame`.** It was originally, and the clock froze whenever the tab was hidden or the compositor idled. It now runs on a 50ms `setInterval` plus a `setTimeout` backstop, with a short CSS `transition` on `.mbc-timer__bar` smoothing the steps.
+- Interaction is tap-in-order, not drag — it has to work the same on a phone and a desktop. Tapping a chosen card takes it back. `Lock It In` stays disabled until every book is picked, so a partial answer can't accidentally end the game.
+- Same accessibility rules as Events: 1.25rem minimum, `clamp()` headings. Book cards are real `<button>`s with `aria-pressed` and a spelled-out `aria-label`; the timer is `aria-hidden` (a per-frame live region would be unusable) and the round length is announced in the prompt text instead.
+- Adding a second game: give it its own `<section>` below the arena, and keep the "More Games Are Coming" list in sync.
 
 ## Page/CSS pairing and the `u-` class system
 
@@ -50,8 +84,8 @@ Selectors follow a strict Nicepage scheme — match it exactly when adding marku
 ## Site structure
 
 - [index.html](index.html) is the real home page. [Home.html](Home.html) is a 2-line meta-refresh stub redirecting to `./` — keep it, older links point at it.
-- Nav is **duplicated inline in every page** — there are no includes/templates. Each page carries its own `<header>` and `<footer>`, and each header contains **two** copies of the menu: the desktop `ul.u-nav-1` and the mobile off-canvas `ul.u-nav-2`. A nav change means editing 2 × (number of pages) lists. Current items: Home (`./`), Events, Give, History.
-- Root-level pages: [Events.html](Events.html), [Give.html](Give.html), [History.html](History.html), [Volunteer.html](Volunteer.html).
+- Nav is **duplicated inline in every page** — there are no includes/templates. Each page carries its own `<header>` and `<footer>`, and each header contains **two** copies of the menu: the desktop `ul.u-nav-1` and the mobile off-canvas `ul.u-nav-2`. A nav change means editing 2 × (number of pages) lists — currently 9 pages, so 18 edits. Current items: Home (`./`), Events, Give, History, Games. The two list variants differ only in the anchor's classes (the desktop one carries `u-nav-link-2` and the palette hover/active classes; the mobile one is bare `u-button-style u-nav-link`), and the markup is byte-identical across pages, so a nav change is safely scriptable with two `sed` substitutions anchored on the item you want to insert after.
+- Root-level pages: [Events.html](Events.html), [Give.html](Give.html), [History.html](History.html), [Games.html](Games.html), [Volunteer.html](Volunteer.html).
 - History sub-pages: [The-First-50-Years.html](The-First-50-Years.html), [The-years-1968---1995.html](The-years-1968---1995.html), [the-years-1996---2018.html](the-years-1996---2018.html). Capitalization is inconsistent by generator accident and **case-sensitive on Linux hosts** — copy filenames verbatim, never normalize them.
 - Flyer images in [images/](images/) use lowercase-hyphenated names (`weekly-schedule.png`, `memorial-alfred-taylor.png`, …). Keep new ones in that style: spaces require URL-encoding and capitals break on case-sensitive hosts.
 - `Volunteer.html` is not reachable from the nav today. Treat it as a draft unless told otherwise.

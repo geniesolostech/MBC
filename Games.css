@@ -1,0 +1,947 @@
+/* ==========================================================================
+   Games page — hand-authored, not Nicepage output.
+   Re-exporting this page from the Nicepage app will destroy this file.
+   Same purple/gold church palette as Events.css, dialled up for a game:
+   a dark panel, gold highlights, motion on every correct answer.
+   Body copy stays at 1.25rem (20px) and up for readability.
+   ========================================================================== */
+
+/* On :root rather than .mbc-games so the site footer, which sits outside
+   <main>, can use the same palette. */
+
+:root {
+  --purple: #5c16bd;
+  --purple-deep: #3f0d86;
+  --purple-night: #21093f;
+  --purple-soft: #f3edfc;
+  --gold: #e0a800;
+  --gold-bright: #f6c445;
+  --ink: #241436;
+  --ink-soft: #4a3d59;
+  --cream: #fdfbf6;
+  --alarm: #ff5a5f;
+  --rule: rgba(92, 22, 189, 0.14);
+
+  --font-display: 'Montserrat', 'Roboto', sans-serif;
+  --font-body: 'Open Sans', 'Lato', sans-serif;
+}
+
+.mbc-games {
+  background-color: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  line-height: 1.65;
+  display: block;
+}
+
+.mbc-games *,
+.mbc-games *::before,
+.mbc-games *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.mbc-wrap {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.mbc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mbc-eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin: 0 0 10px;
+}
+
+/* ==========================================================================
+   Hero
+   ========================================================================== */
+
+.mbc-hero {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(246, 196, 69, 0.22), transparent 55%),
+    radial-gradient(circle at 85% 80%, rgba(146, 84, 232, 0.28), transparent 60%),
+    linear-gradient(135deg, var(--purple-deep) 0%, var(--purple) 60%, #7a2ad6 100%);
+  color: #fff;
+  text-align: center;
+  /* Deliberately shallow: the game panel below needs to be reachable
+     without much scrolling, so the hero gives up the height. */
+  padding: 18px 24px 18px;
+}
+
+.mbc-hero__inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.mbc-hero__eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  margin: 0 0 8px;
+}
+
+.mbc-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 4.6vw, 3rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  margin: 0 0 6px;
+  color: #fff;
+}
+
+.mbc-hero__tagline {
+  font-size: clamp(1.25rem, 2.2vw, 1.45rem);
+  font-weight: 300;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* ==========================================================================
+   Arena — the intro copy above the game panel
+   ========================================================================== */
+
+.mbc-arena {
+  padding: 20px 0 16px;
+}
+
+.mbc-arena__head {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 14px;
+}
+
+.mbc-arena__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 3.4vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   The game panel
+   ========================================================================== */
+
+.mbc-game {
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(146, 84, 232, 0.4), transparent 62%),
+    linear-gradient(165deg, var(--purple-night) 0%, #2f0b5e 55%, var(--purple-deep) 100%);
+  border: 3px solid rgba(246, 196, 69, 0.35);
+  border-radius: 26px;
+  padding: 20px 26px 30px;
+  box-shadow: 0 26px 60px rgba(33, 9, 63, 0.35);
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mbc-game.is-right {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 0 6px rgba(246, 196, 69, 0.22), 0 26px 60px rgba(33, 9, 63, 0.35);
+}
+
+.mbc-game.is-wrong {
+  border-color: var(--alarm);
+  box-shadow: 0 0 0 6px rgba(255, 90, 95, 0.22), 0 26px 60px rgba(33, 9, 63, 0.35);
+  animation: mbc-shake 0.42s ease;
+}
+
+@keyframes mbc-shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-9px); }
+  40%      { transform: translateX(9px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(5px); }
+}
+
+/* ---------- scoreboard ---------- */
+
+.mbc-hud {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mbc-hud__stat {
+  flex: 0 1 190px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(246, 196, 69, 0.28);
+  border-radius: 14px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.mbc-hud__label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.mbc-hud__value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--gold-bright);
+}
+
+.mbc-hud__value.is-pop {
+  animation: mbc-pop 0.4s cubic-bezier(0.34, 1.7, 0.5, 1);
+}
+
+@keyframes mbc-pop {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- timer ---------- */
+
+.mbc-timer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  transition: opacity 0.25s ease;
+}
+
+.mbc-timer.is-idle {
+  opacity: 0.3;
+}
+
+.mbc-timer__track {
+  flex: 1 1 auto;
+  height: 18px;
+  background: rgba(0, 0, 0, 0.32);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.mbc-timer__bar {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold-bright) 0%, #ffdd6b 100%);
+  box-shadow: 0 0 14px rgba(246, 196, 69, 0.55);
+  /* The script steps the width every 50ms; this smooths the gaps. */
+  transition: width 0.09s linear, background-color 0.2s ease;
+}
+
+.mbc-timer.is-low .mbc-timer__bar {
+  background: linear-gradient(90deg, #d63a3f 0%, var(--alarm) 100%);
+  box-shadow: 0 0 14px rgba(255, 90, 95, 0.6);
+}
+
+.mbc-timer__clock {
+  flex: 0 0 auto;
+  min-width: 4.2em;
+  margin: 0;
+  text-align: right;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold-bright);
+}
+
+.mbc-timer.is-low .mbc-timer__clock {
+  color: var(--alarm);
+  animation: mbc-blink 0.7s steps(2, end) infinite;
+}
+
+@keyframes mbc-blink {
+  50% { opacity: 0.35; }
+}
+
+/* ==========================================================================
+   Screens
+   ========================================================================== */
+
+.mbc-screen {
+  text-align: center;
+  color: #fff;
+}
+
+.mbc-screen[hidden] {
+  display: none;
+}
+
+.mbc-screen__flag {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  margin: 0 0 8px;
+}
+
+.mbc-screen__flag--stop {
+  color: var(--alarm);
+}
+
+.mbc-screen__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  margin: 0 0 20px;
+  color: #fff;
+}
+
+.mbc-screen__foot {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 16px 0 0;
+}
+
+.mbc-rules {
+  max-width: 560px;
+  margin: 0 auto 26px;
+  padding: 0;
+  list-style: none;
+  counter-reset: rule;
+  text-align: left;
+}
+
+.mbc-rules li {
+  counter-increment: rule;
+  position: relative;
+  padding: 10px 0 10px 52px;
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mbc-rules li:last-child {
+  border-bottom: 0;
+}
+
+.mbc-rules li::before {
+  content: counter(rule);
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--purple-night);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 34px;
+  text-align: center;
+}
+
+.mbc-rules strong {
+  color: var(--gold-bright);
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.mbc-btn {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 16px 40px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.14s ease, box-shadow 0.2s ease,
+              background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
+.mbc-btn--go {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+  color: var(--purple-night);
+  box-shadow: 0 10px 26px rgba(224, 168, 0, 0.35);
+}
+
+.mbc-btn--go:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 34px rgba(224, 168, 0, 0.45);
+}
+
+.mbc-btn--ghost {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.35);
+  padding: 16px 30px;
+}
+
+.mbc-btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.mbc-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.mbc-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mbc-btn:focus-visible,
+.mbc-book__btn:focus-visible {
+  outline: 3px solid var(--gold-bright);
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   Play screen — the board of books
+   ========================================================================== */
+
+.mbc-prompt {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 1.75rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 22px;
+}
+
+.mbc-board {
+  list-style: none;
+  margin: 0 auto 22px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+/* Few cards should be big cards, not stretched-out slabs. */
+.mbc-board[data-count="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 600px;
+}
+
+.mbc-board[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 840px;
+}
+
+.mbc-board[data-count="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.mbc-book {
+  display: block;
+}
+
+.mbc-book__btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 108px;
+  padding: 18px 14px;
+  background: var(--cream);
+  border: 3px solid transparent;
+  border-radius: 18px;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+  transition: transform 0.14s ease, box-shadow 0.2s ease,
+              background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.mbc-book__btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.34);
+}
+
+.mbc-book__btn:active {
+  transform: translateY(0);
+}
+
+.mbc-book__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--purple-deep);
+  overflow-wrap: break-word;
+  hyphens: none;
+}
+
+.mbc-book__btn.is-picked {
+  background: linear-gradient(150deg, var(--gold-bright) 0%, var(--gold) 100%);
+  border-color: #fff;
+  box-shadow: 0 0 0 4px rgba(246, 196, 69, 0.3), 0 14px 26px rgba(0, 0, 0, 0.34);
+}
+
+.mbc-book__btn.is-picked .mbc-book__name {
+  color: var(--purple-night);
+}
+
+.mbc-book__badge {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--purple);
+  color: #fff;
+  border: 3px solid var(--cream);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 36px;
+  text-align: center;
+  transform: scale(0);
+  transition: transform 0.2s cubic-bezier(0.34, 1.7, 0.5, 1);
+}
+
+.mbc-book__btn.is-picked .mbc-book__badge {
+  transform: scale(1);
+}
+
+.mbc-chosen {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 22px;
+  min-height: 1.7em;
+}
+
+.mbc-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.mbc-hint {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 18px 0 0;
+}
+
+.mbc-hint kbd {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+/* ==========================================================================
+   Game over screen
+   ========================================================================== */
+
+.mbc-reason {
+  font-size: 1.35rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 18px;
+}
+
+.mbc-final {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 26px;
+}
+
+.mbc-final__num {
+  display: inline-block;
+  min-width: 1.6em;
+  margin-left: 8px;
+  font-size: clamp(2.6rem, 7vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--gold-bright);
+  vertical-align: -0.14em;
+}
+
+.mbc-answerbox {
+  max-width: 720px;
+  margin: 0 auto 28px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(246, 196, 69, 0.28);
+  border-radius: 16px;
+}
+
+.mbc-answerbox__label {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 14px;
+}
+
+.mbc-answer {
+  list-style: none;
+  counter-reset: answer;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mbc-answer__item {
+  counter-increment: answer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 8px 8px;
+  background: var(--cream);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--purple-deep);
+}
+
+.mbc-answer__item::before {
+  content: counter(answer);
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--purple);
+  color: #fff;
+  font-size: 1rem;
+  line-height: 30px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Confetti — a burst of gold on every correct answer
+   ========================================================================== */
+
+.mbc-confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.mbc-confetti__bit {
+  position: absolute;
+  top: -18px;
+  width: 11px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--gold-bright);
+  opacity: 0;
+  animation: mbc-fall 1.25s ease-in forwards;
+}
+
+.mbc-confetti__bit.is-purple {
+  background: #9d5ce8;
+}
+
+@keyframes mbc-fall {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift, 0), 460px, 0) rotate(var(--spin, 360deg));
+  }
+}
+
+/* ==========================================================================
+   More games coming
+   ========================================================================== */
+
+.mbc-more {
+  padding: 56px 0 64px;
+  text-align: center;
+}
+
+.mbc-more__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+  font-weight: 800;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+
+.mbc-more__text {
+  font-size: 1.25rem;
+  color: var(--ink-soft);
+  max-width: 640px;
+  margin: 0 auto 26px;
+}
+
+.mbc-soon {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.mbc-soon__item {
+  padding: 12px 24px;
+  border: 2px dashed var(--rule);
+  border-radius: 999px;
+  background: var(--purple-soft);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--purple-deep);
+}
+
+/* ==========================================================================
+   Back to top — floating button and footer link
+   ========================================================================== */
+
+.mbc-totop {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 60;
+  width: 58px;
+  height: 58px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--purple);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(33, 9, 63, 0.42);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease,
+              background-color 0.2s ease;
+}
+
+.mbc-totop.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mbc-totop:hover {
+  background: var(--purple-deep);
+}
+
+.mbc-totop__arrow {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.mbc-footer {
+  padding: 26px 0;
+  text-align: center;
+}
+
+.mbc-footer__top {
+  display: inline-block;
+  padding: 12px 32px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  background: var(--purple);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.mbc-footer__top:hover,
+.mbc-footer__top:focus {
+  background: var(--gold);
+  color: var(--purple-night);
+  text-decoration: none;
+}
+
+.mbc-footer__note {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+}
+
+/* ==========================================================================
+   Responsive — desktop first, matching the site's breakpoint order
+   ========================================================================== */
+
+@media (max-width: 991px) {
+  .mbc-game {
+    padding: 22px 18px 28px;
+    border-radius: 20px;
+  }
+
+  .mbc-board[data-count="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .mbc-wrap {
+    padding: 0 16px;
+  }
+
+  .mbc-hero {
+    padding: 18px 18px 16px;
+  }
+
+  .mbc-arena {
+    padding: 18px 0 12px;
+  }
+
+  .mbc-arena__head {
+    margin-bottom: 14px;
+  }
+
+  /* Three across is unreadable on a phone — two, always. */
+  .mbc-board,
+  .mbc-board[data-count="2"],
+  .mbc-board[data-count="3"],
+  .mbc-board[data-count="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: none;
+    gap: 12px;
+  }
+
+  .mbc-book__btn {
+    min-height: 92px;
+    padding: 14px 10px;
+  }
+
+  .mbc-hud {
+    gap: 8px;
+  }
+
+  .mbc-hud__stat {
+    flex: 1 1 0;
+    padding: 8px 6px;
+  }
+
+  .mbc-hud__label {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* Both buttons full width and stacked, so nothing is a small target. */
+  .mbc-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mbc-btn {
+    width: 100%;
+    padding: 16px 20px;
+  }
+
+  /* No keyboard to press 1-9 on. */
+  .mbc-hint {
+    display: none;
+  }
+
+  .mbc-totop {
+    right: 14px;
+    bottom: 14px;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 575px) {
+  .mbc-hud__stat--wide .mbc-hud__label {
+    /* "Books this round" wraps badly in a narrow cell. */
+    font-size: 0.62rem;
+  }
+
+  .mbc-timer__clock {
+    font-size: 1.25rem;
+    min-width: 3.6em;
+  }
+
+  .mbc-rules li {
+    padding-left: 46px;
+    font-size: 1.15rem;
+  }
+
+  .mbc-answer__item {
+    font-size: 1.05rem;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .mbc-game.is-wrong,
+  .mbc-hud__value.is-pop,
+  .mbc-timer.is-low .mbc-timer__clock,
+  .mbc-confetti__bit {
+    animation: none;
+  }
+
+  .mbc-btn,
+  .mbc-book__btn,
+  .mbc-book__badge,
+  .mbc-totop {
+    transition: none;
+  }
+
+  .mbc-btn--go:hover:not(:disabled),
+  .mbc-book__btn:hover {
+    transform: none;
+  }
+}
